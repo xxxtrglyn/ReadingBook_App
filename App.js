@@ -9,6 +9,7 @@ import LibraryScreen from "./screens/LibraryScreen";
 import AccountScreen from "./screens/AccountScreen/AccountScreen";
 import SignInScreen from "./screens/AccountScreen/SignInScreen";
 import SignUpScreen from "./screens/AccountScreen/SignUpScreen";
+import BookDetailScreen from "./screens/ReadingScreen/BookDetailScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -60,6 +61,14 @@ export default function App() {
           <Tab.Screen
             name="SignUp"
             component={SignUpScreen}
+            options={{
+              tabBarIcon: () => <Ionicons size={20} name="person-outline" />,
+              headerShown: false,
+            }}
+          />
+          <Tab.Screen
+            name="Detail"
+            component={BookDetailScreen}
             options={{
               tabBarIcon: () => <Ionicons size={20} name="person-outline" />,
               headerShown: false,

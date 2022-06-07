@@ -30,6 +30,8 @@ const styles = StyleSheet.create({
     width: 120,
     height: 170,
     flex: 0,
+    borderWidth: 2,
+    borderColor: "white",
   },
   titleWrapper: {
     flex: 1,

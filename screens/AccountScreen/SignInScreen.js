@@ -6,8 +6,7 @@ import {
   StyleSheet,
   Image,
   TextInput,
-  ScrollView,
-  KeyboardAvoidingView,
+  Text,
   Dimensions,
   Alert,
 } from "react-native";
@@ -84,7 +83,9 @@ function SignInScreen() {
           onChangeText={passwordInputHandler}
         />
       </View>
-
+      <Text style={styles.text}>
+        Don't have an account? <Text style={{ color: "yellow" }}>Sign Up</Text>
+      </Text>
       <PrimaryButton onPress={submitHandler}>Sign in</PrimaryButton>
     </LinearGradient>
   );
@@ -127,5 +128,9 @@ const styles = StyleSheet.create({
 
   inputContainer: {
     width: "100%",
+  },
+  text: {
+    color: "white",
+    fontSize: 15,
   },
 });
