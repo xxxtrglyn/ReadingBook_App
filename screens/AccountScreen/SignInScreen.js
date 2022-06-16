@@ -1,6 +1,7 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   View,
   StyleSheet,
@@ -13,11 +14,16 @@ import {
 import LabelIcon from "../../components/ui/LabelIcon";
 import PrimaryButton from "../../components/ui/PrimaryButton";
 import Title from "../../components/ui/Title";
+import { AuthContext } from "../../store/auth-context";
+import SignUpScreen from "./SignUpScreen";
 
-function SignInScreen() {
+function SignInScreen({ navigation }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-
+  const authCtx = useContext(AuthContext);
+  function navigateToSignUpScreen() {
+    navigation.navigate("signup");
+  }
   function usernameInputHandler(enteredText) {
     setUsername(enteredText);
   }
@@ -29,7 +35,6 @@ function SignInScreen() {
   async function submitHandler() {
     const usernameIsValid =
       username.trim().length > 0 && username.includes("@");
-    console.log(usernameIsValid);
     const passwordIsValid = password.trim().length > 0;
 
     if (!usernameIsValid || !passwordIsValid) {
@@ -42,18 +47,16 @@ function SignInScreen() {
     const user = {
       email: username,
       password: password,
-      fullName: fullname,
     };
     const baseURL = "http://10.0.2.2:3000/api";
     try {
-      const res = await axios.post(`${baseURL}/auth/sign_up`, user, {
+      const res = await axios.post(`${baseURL}/auth/sign_in`, user, {
         headers: {
           "Content-Type": "application/json",
         },
       });
-      Alert.alert("Sign up successfully", "", [
-        { text: "OK", style: "cancel" },
-      ]);
+      AsyncStorage.setItem("userInfo", JSON.stringify(res.data));
+      authCtx.authenticate(res.data.token);
     } catch (err) {
       console.log(err);
       Alert.alert("Error occurs", "Some err", [{ text: "OK" }]);
@@ -61,33 +64,38 @@ function SignInScreen() {
   }
 
   return (
-    <LinearGradient colors={["#C04848", "#480048"]} style={styles.screen}>
-      <Title>Sign in</Title>
-      <Image
-        style={styles.imageContainer}
-        source={require("../../assets/images/signupimage.jpg")}
-      />
-      <View style={styles.inputContainer}>
-        <LabelIcon icon="person-outline">Email</LabelIcon>
-        <TextInput
-          style={styles.inputText}
-          value={username}
-          onChangeText={usernameInputHandler}
-          autoCapitalize="none"
+    <>
+      <LinearGradient colors={["#C04848", "#480048"]} style={styles.screen}>
+        <Title>Sign in</Title>
+        <Image
+          style={styles.imageContainer}
+          source={require("../../assets/images/signupimage.jpg")}
         />
-        <LabelIcon icon="lock-closed-outline">Password</LabelIcon>
-        <TextInput
-          style={styles.inputText}
-          secureTextEntry={true}
-          value={password}
-          onChangeText={passwordInputHandler}
-        />
-      </View>
-      <Text style={styles.text}>
-        Don't have an account? <Text style={{ color: "yellow" }}>Sign Up</Text>
-      </Text>
-      <PrimaryButton onPress={submitHandler}>Sign in</PrimaryButton>
-    </LinearGradient>
+        <View style={styles.inputContainer}>
+          <LabelIcon icon="person-outline">Email</LabelIcon>
+          <TextInput
+            style={styles.inputText}
+            value={username}
+            onChangeText={usernameInputHandler}
+            autoCapitalize="none"
+          />
+          <LabelIcon icon="lock-closed-outline">Password</LabelIcon>
+          <TextInput
+            style={styles.inputText}
+            secureTextEntry={true}
+            value={password}
+            onChangeText={passwordInputHandler}
+          />
+        </View>
+        <Text style={styles.text}>
+          Don't have an account?{" "}
+          <Text style={{ color: "yellow" }} onPress={navigateToSignUpScreen}>
+            Sign Up
+          </Text>
+        </Text>
+        <PrimaryButton onPress={submitHandler}>Sign in</PrimaryButton>
+      </LinearGradient>
+    </>
   );
 }
 

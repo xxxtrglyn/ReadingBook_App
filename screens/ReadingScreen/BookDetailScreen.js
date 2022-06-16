@@ -1,6 +1,6 @@
 import axios from "axios";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import {
   View,
@@ -9,26 +9,84 @@ import {
   Text,
   ScrollView,
   FlatList,
+  Alert,
 } from "react-native";
 import ChapterItem from "../../components/detailbook/ChapterItem";
 import Card from "../../components/ui/Card";
 import PrimaryButton from "../../components/ui/PrimaryButton";
-
-function BookDetailScreen() {
+import { useRoute } from "@react-navigation/native";
+import { AuthContext } from "../../store/auth-context";
+function BookDetailScreen({ navigation }) {
+  const route = useRoute();
+  const authCtx = useContext(AuthContext);
   const [book, setBook] = useState({});
+  const [isFollowed, setIsFollowed] = useState(false);
+
+  function toggleFollow() {
+    setIsFollowed((prevState) => !prevState);
+  }
+
+  async function followHandler() {
+    try {
+      await axios.post(
+        "http://10.0.2.2:3000/api/follow",
+        { bookId: book._id },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: authCtx.token,
+          },
+        }
+      );
+      Alert.alert("Added to your library");
+      toggleFollow();
+    } catch (err) {
+      console.log("errors occurs", err);
+    }
+  }
+
+  async function unfollowHandler() {
+    try {
+      await axios.delete(`http://10.0.2.2:3000/api/unfollow/book/${book._id}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: authCtx.token,
+        },
+      });
+      Alert.alert("Delete from your library");
+      toggleFollow();
+    } catch (err) {
+      console.log("errors occurs", err);
+    }
+  }
   useEffect(() => {
     async function getABook() {
+      var res;
       try {
-        const res = await axios.get(
-          "http://10.0.2.2:3000/api/books/book/6282053daf31daa83b74c194"
-        );
+        if (authCtx.isAuthenticated) {
+          res = await axios.get(
+            `http://10.0.2.2:3000/api/books/book/${route.params._id}`,
+            {
+              headers: {
+                Authorization: authCtx.token,
+              },
+            }
+          );
+        } else {
+          res = await axios.get(
+            `http://10.0.2.2:3000/api/books/book/${route.params._id}`
+          );
+        }
+        if (res.data.isFollowed) {
+          setIsFollowed(true);
+        }
         setBook(res.data);
       } catch (err) {
         console.log("error occurs", err);
       }
     }
     getABook();
-  });
+  }, []);
   return (
     <>
       {book._id !== undefined && (
@@ -64,7 +122,23 @@ function BookDetailScreen() {
               <Text style={styles.infoText}>1000 follower</Text>
             </Card>
           </View>
-          <PrimaryButton>Add to library</PrimaryButton>
+          {!isFollowed ? (
+            <PrimaryButton
+              onPress={followHandler}
+              textStyle={styles.followTextStyle}
+              borderStyle={styles.followBorderStyle}
+            >
+              Add to library
+            </PrimaryButton>
+          ) : (
+            <PrimaryButton
+              onPress={unfollowHandler}
+              textStyle={styles.unfollowTextStyle}
+              borderStyle={styles.unfollowBorderStyle}
+            >
+              Unfollow
+            </PrimaryButton>
+          )}
 
           <FlatList
             style={styles.chapterContainer}
@@ -92,7 +166,7 @@ const styles = StyleSheet.create({
     width: 141,
     height: 200,
     alignItems: "center",
-    marginTop: 30,
+    marginTop: 80,
   },
   bookCover: {
     width: 141,
@@ -136,5 +210,17 @@ const styles = StyleSheet.create({
   iconContainer: {
     flexDirection: "row",
     alignItems: "center",
+  },
+  followTextStyle: {
+    color: "#93F9B9",
+  },
+  followBorderStyle: {
+    borderColor: "#93F9B9",
+  },
+  unfollowTextStyle: {
+    color: "red",
+  },
+  unfollowBorderStyle: {
+    borderColor: "red",
   },
 });

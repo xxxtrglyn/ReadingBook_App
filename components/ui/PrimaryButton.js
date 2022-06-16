@@ -22,6 +22,8 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     flex: 0,
     borderColor: "white",
+    marginHorizontal: 5,
+    borderRadius: 6,
   },
   buttonInnerContainer: {
     paddingVertical: 8,

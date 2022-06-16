@@ -1,12 +1,21 @@
+import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { View, Pressable, StyleSheet, Text } from "react-native";
 
 function ChapterItem({ chapter, index }) {
+  const navigation = useNavigation();
+  function readingHandler() {
+    navigation.navigate("ReadingScreen", {
+      chapter: chapter.contentLink,
+      title: chapter.title,
+    });
+  }
   return (
     <View style={styles.outerrButtonContainer}>
       <Pressable
         android_ripple={{ color: "#ECE9E6" }}
         style={styles.innerButtonContainer}
+        onPress={readingHandler}
       >
         <Text style={styles.text}>
           <Text style={styles.textBold}>Chapter {index + 1}:</Text>{" "}

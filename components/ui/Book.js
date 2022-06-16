@@ -1,18 +1,29 @@
 import React from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+import { View, Text, Image, StyleSheet, Pressable } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 function Book(props) {
+  const navigator = useNavigation();
+  function moveToDetailHandler() {
+    navigator.navigate("DetailScreen", props.book);
+  }
   return (
     <View style={styles.bookContainer}>
-      <Image
-        style={styles.bookCover}
-        source={{
-          uri: props.book.coverImageURL,
-        }}
-      />
-      <View style={styles.titleWrapper}>
-        <Text style={styles.bookTitle}>{props.book.bookName}</Text>
-      </View>
+      <Pressable
+        style={{ flex: 1 }}
+        android_ripple={{ color: "white" }}
+        onPress={moveToDetailHandler}
+      >
+        <Image
+          style={styles.bookCover}
+          source={{
+            uri: props.book.coverImageURL,
+          }}
+        />
+        <View style={styles.titleWrapper}>
+          <Text style={styles.bookTitle}>{props.book.bookName}</Text>
+        </View>
+      </Pressable>
     </View>
   );
 }
