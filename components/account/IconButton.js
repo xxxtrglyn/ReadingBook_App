@@ -1,13 +1,17 @@
 import React from "react";
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-function IconButton({ children, icon }) {
+function IconButton({ children, icon, onPress }) {
   return (
-    <View style={styles.container}>
+    <Pressable
+      style={styles.container}
+      onPress={onPress}
+      android_ripple={{ color: "white" }}
+    >
       <Ionicons size={25} color="white" name={icon} />
       <Text style={styles.labelText}>{children}</Text>
-    </View>
+    </Pressable>
   );
 }
 

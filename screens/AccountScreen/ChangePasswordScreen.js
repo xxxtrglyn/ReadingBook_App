@@ -13,19 +13,13 @@ import PrimaryButton from "../../components/ui/PrimaryButton";
 import Title from "../../components/ui/Title";
 import { LinearGradient } from "expo-linear-gradient";
 import { AuthContext } from "../../store/auth-context";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
-function SignUpScreen({ navigation }) {
-  const [fullname, setFullname] = useState("");
+function ChangePasswordScreen({ navigation }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [cfpassword, setCfpassword] = useState();
 
   const authCtx = useContext(AuthContext);
-
-  function fullnameInputHandler(enteredText) {
-    setFullname(enteredText);
-  }
 
   function usernameInputHandler(enteredText) {
     setUsername(enteredText);
@@ -40,19 +34,6 @@ function SignUpScreen({ navigation }) {
   }
 
   async function submitHandler() {
-    const fullnameIsValid = fullname.trim().length > 0;
-    const usernameIsValid =
-      username.trim().length > 0 && username.includes("@");
-    console.log(usernameIsValid);
-    const passwordIsValid = password.trim().length > 0;
-
-    if (!fullnameIsValid || !usernameIsValid || !passwordIsValid) {
-      Alert.alert("Input isn't valid", "Please check again", [
-        { text: "Sorry", style: "destructive" },
-      ]);
-      return;
-    }
-
     if (password !== cfpassword) {
       Alert.alert("Your confirm password is wrong", "Please check again", [
         { text: "Sorry", style: "destructive" },
@@ -61,52 +42,47 @@ function SignUpScreen({ navigation }) {
     }
 
     const user = {
-      email: username,
-      password: password,
-      fullName: fullname,
+      oldPassword: username,
+      newPassword: password,
     };
     const baseURL = "http://10.0.2.2:3000/api";
     try {
-      const res = await axios.post(`${baseURL}/auth/sign_up`, user, {
+      const res = await axios.put(`${baseURL}/users/change-password`, user, {
         headers: {
           "Content-Type": "application/json",
+          Authorization: authCtx.token,
         },
       });
-
-      AsyncStorage.setItem("userInfo", JSON.stringify(res.data));
-      authCtx.authenticate(res.data.token);
-      Alert.alert("Sign up successfully", "", [
+      Alert.alert("Change password successfully", "", [
         { text: "OK", style: "cancel" },
       ]);
+      setUsername("");
+      setPassword("");
+      setCfpassword("");
       navigation.goBack();
     } catch (err) {
-      console.log(err);
-      Alert.alert("Error occurs", "Some err", [{ text: "OK" }]);
+      console.log(err.response.data.message);
+      Alert.alert("Error occurs", err.response.data.message, [{ text: "OK" }]);
     }
   }
 
   return (
     <LinearGradient colors={["#C04848", "#480048"]} style={styles.screen}>
-      <Title>Sign Up</Title>
+      <Title>change password</Title>
       <Image
         style={styles.imageContainer}
         source={require("../../assets/images/signupimage.jpg")}
       />
       <View style={styles.inputContainer}>
-        <LabelIcon icon="happy-outline">Fullname</LabelIcon>
-        <TextInput
-          style={styles.inputText}
-          value={fullname}
-          onChangeText={fullnameInputHandler}
-        />
-        <LabelIcon icon="person-outline">Email</LabelIcon>
+        <LabelIcon icon="lock-closed-outline">Old Password</LabelIcon>
         <TextInput
           style={styles.inputText}
           value={username}
           onChangeText={usernameInputHandler}
           autoCapitalize="none"
+          secureTextEntry={true}
         />
-        <LabelIcon icon="lock-closed-outline">Password</LabelIcon>
+        <LabelIcon icon="lock-closed-outline">New Password</LabelIcon>
         <TextInput
           style={styles.inputText}
           secureTextEntry={true}
@@ -122,12 +98,12 @@ function SignUpScreen({ navigation }) {
         />
       </View>
 
-      <PrimaryButton onPress={submitHandler}>Sign up</PrimaryButton>
+      <PrimaryButton onPress={submitHandler}>Change</PrimaryButton>
     </LinearGradient>
   );
 }
 
-export default SignUpScreen;
+export default ChangePasswordScreen;
 
 const deviceWidth = Dimensions.get("window").height;
 const imageSize = deviceWidth > 650 ? 150 : 100;

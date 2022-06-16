@@ -3,16 +3,18 @@ import { StyleSheet } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
-import HomeScreen from "./screens/HomeScreen";
+import HomeScreen from "./screens/HomeScreen/HomeScreen";
 import CategoryScreen from "./screens/CategoryScreen/CategoryScreen";
-import LibraryScreen from "./screens/LibraryScreen";
+import LibraryScreen from "./screens/LibraryScreen/LibraryScreen";
 import AccountScreen from "./screens/AccountScreen/AccountScreen";
-import SignInScreen from "./screens/AccountScreen/SignInScreen";
-import SignUpScreen from "./screens/AccountScreen/SignUpScreen";
+import AuthContextProvider, { AuthContext } from "./store/auth-context";
+import { useState, useEffect, useContext } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import NotificationScreen from "./screens/NotificationScreen/NotificationScreen";
 
 const Tab = createBottomTabNavigator();
 
-export default function App() {
+function Navigation() {
   return (
     <>
       <NavigationContainer>
@@ -34,6 +36,16 @@ export default function App() {
             }}
           />
           <Tab.Screen
+            name="Notifications"
+            component={NotificationScreen}
+            options={{
+              tabBarIcon: () => (
+                <Ionicons size={20} name="notifications-outline" />
+              ),
+              headerShown: false,
+            }}
+          />
+          <Tab.Screen
             name="Library"
             component={LibraryScreen}
             options={{
@@ -49,26 +61,40 @@ export default function App() {
               headerShown: false,
             }}
           />
-          <Tab.Screen
-            name="SignIn"
-            component={SignInScreen}
-            options={{
-              tabBarIcon: () => <Ionicons size={20} name="person-outline" />,
-              headerShown: false,
-            }}
-          />
-          <Tab.Screen
-            name="SignUp"
-            component={SignUpScreen}
-            options={{
-              tabBarIcon: () => <Ionicons size={20} name="person-outline" />,
-              headerShown: false,
-            }}
-          />
         </Tab.Navigator>
       </NavigationContainer>
       <StatusBar style="light" />
     </>
+  );
+}
+
+function Root() {
+  const [isTryingLogin, setIsTryingLogin] = useState(true);
+
+  const authCtx = useContext(AuthContext);
+
+  useEffect(() => {
+    async function fetchToken() {
+      const storedToken = await AsyncStorage.getItem("token");
+
+      if (storedToken) {
+        authCtx.authenticate(storedToken);
+      }
+
+      setIsTryingLogin(false);
+    }
+
+    fetchToken();
+  }, []);
+
+  return <Navigation />;
+}
+
+export default function App() {
+  return (
+    <AuthContextProvider>
+      <Root />
+    </AuthContextProvider>
   );
 }
 
