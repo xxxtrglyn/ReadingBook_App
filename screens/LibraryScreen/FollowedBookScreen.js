@@ -20,7 +20,7 @@ function FollowedBookScreen({ navigation }) {
     async function getBooks() {
       try {
         const res = await axios.get(
-          "http://reading-book-api.herokuapp.com/api/users/user/followed-books",
+          "http://10.0.2.2:3003/api/users/user/followed-books",
           {
             headers: {
               Authorization: authCtx.token,

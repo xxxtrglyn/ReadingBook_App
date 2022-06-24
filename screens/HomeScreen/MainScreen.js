@@ -26,7 +26,7 @@ function MainScreen() {
     async function getRatingBooks() {
       try {
         const res = await axios.get(
-          "http://reading-book-api.herokuapp.com/api/books?pageSize=10&pageNumber=1&sort=desc&typeSort=avrStarNumber"
+          "http://10.0.2.2:3002/api/books?pageSize=10&pageNumber=1&sort=desc&typeSort=avrStarNumber"
         );
         setRatingBooks(res.data.books);
       } catch (err) {
@@ -36,7 +36,7 @@ function MainScreen() {
     async function getViewBooks() {
       try {
         const res = await axios.get(
-          "http://reading-book-api.herokuapp.com/api/books?pageSize=10&pageNumber=1&sort=desc&typeSort=viewNumber"
+          "http://10.0.2.2:3002/api/books?pageSize=10&pageNumber=1&sort=desc&typeSort=viewNumber"
         );
         setViewBooks(res.data.books);
       } catch (err) {
@@ -46,7 +46,7 @@ function MainScreen() {
     async function getFollowsBooks() {
       try {
         const res = await axios.get(
-          "http://reading-book-api.herokuapp.com/api/books?pageSize=10&pageNumber=1&sort=desc&typeSort=followTotal"
+          "http://10.0.2.2:3002/api/books?pageSize=10&pageNumber=1&sort=desc&typeSort=followTotal"
         );
         setFollowsBooks(res.data.books);
       } catch (err) {
@@ -63,7 +63,7 @@ function MainScreen() {
       const searchEngine = setTimeout(async () => {
         try {
           const res = await axios.get(
-            `http://reading-book-api.herokuapp.com/api/books?pageSize=50&pageNumber=1&keyword=${searchContent}`
+            `http://10.0.2.2:3002/api/books?pageSize=50&pageNumber=1&keyword=${searchContent}`
           );
           setSearchBook(res.data.books);
         } catch (err) {

@@ -18,7 +18,7 @@ function NotifyItem({ noti, onPress }) {
   async function readNotiHandler() {
     try {
       await axios.put(
-        "http://reading-book-api.herokuapp.com/api/notifications/read",
+        "http://10.0.2.2:3002/api/notifications/read",
         { notificationId: noti._id },
         {
           headers: {

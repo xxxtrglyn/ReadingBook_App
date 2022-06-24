@@ -14,7 +14,7 @@ function BookScreen({ route }) {
   const [book, setBook] = useState([]);
 
   useEffect(() => {
-    let url = "http://reading-book-api.herokuapp.com/api/books";
+    let url = "http://10.0.2.2:3002/api/books";
     async function getBookInCategory() {
       if (categoryIsValid || route.name === "ALL") {
         try {

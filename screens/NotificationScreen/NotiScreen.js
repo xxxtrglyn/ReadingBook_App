@@ -31,7 +31,7 @@ function NotiScreen({ navigation }) {
     );
     try {
       await axios.put(
-        "http://reading-book-api.herokuapp.com/api/notifications/read-all",
+        "http://10.0.2.2:3002/api/notifications/read-all",
         {},
         {
           headers: {
@@ -51,14 +51,11 @@ function NotiScreen({ navigation }) {
   useEffect(() => {
     async function getNotifications() {
       try {
-        const res = await axios.get(
-          "http://reading-book-api.herokuapp.com/api/notifications",
-          {
-            headers: {
-              Authorization: authCtx.token,
-            },
-          }
-        );
+        const res = await axios.get("http://10.0.2.2:3003/api/notifications", {
+          headers: {
+            Authorization: authCtx.token,
+          },
+        });
         setNotifications(res.data.reverse());
       } catch (err) {
         console.log("errors occurs", err);

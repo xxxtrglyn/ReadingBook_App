@@ -30,7 +30,7 @@ function BookDetailScreen({ navigation }) {
   async function followHandler() {
     try {
       await axios.post(
-        "http://reading-book-api.herokuapp.com/api/follow",
+        "http://10.0.2.2:3002/api/follow",
         { bookId: book._id },
         {
           headers: {
@@ -48,15 +48,12 @@ function BookDetailScreen({ navigation }) {
 
   async function unfollowHandler() {
     try {
-      await axios.delete(
-        `http://reading-book-api.herokuapp.com/api/unfollow/book/${book._id}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: authCtx.token,
-          },
-        }
-      );
+      await axios.delete(`http://10.0.2.2:3002/api/unfollow/book/${book._id}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: authCtx.token,
+        },
+      });
       Alert.alert("Delete from your library");
       toggleFollow();
     } catch (err) {
@@ -69,7 +66,7 @@ function BookDetailScreen({ navigation }) {
       try {
         if (authCtx.isAuthenticated) {
           res = await axios.get(
-            `http://reading-book-api.herokuapp.com/api/books/book/${route.params._id}`,
+            `http://10.0.2.2:3002/api/books/book/${route.params._id}`,
             {
               headers: {
                 Authorization: authCtx.token,
@@ -78,7 +75,7 @@ function BookDetailScreen({ navigation }) {
           );
         } else {
           res = await axios.get(
-            `http://reading-book-api.herokuapp.com/api/books/book/${route.params._id}`
+            `http://10.0.2.2:3002/api/books/book/${route.params._id}`
           );
         }
         if (res.data.isFollowed) {

@@ -65,7 +65,7 @@ function SignUpScreen({ navigation }) {
       password: password,
       fullName: fullname,
     };
-    const baseURL = "http://reading-book-api.herokuapp.com/api";
+    const baseURL = "http://10.0.2.2:3003/api";
     try {
       const res = await axios.post(`${baseURL}/auth/sign_up`, user, {
         headers: {
