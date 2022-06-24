@@ -10,6 +10,7 @@ import {
   ScrollView,
   FlatList,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import ChapterItem from "../../components/detailbook/ChapterItem";
 import Card from "../../components/ui/Card";
@@ -29,7 +30,7 @@ function BookDetailScreen({ navigation }) {
   async function followHandler() {
     try {
       await axios.post(
-        "http://10.0.2.2:3000/api/follow",
+        "http://reading-book-api.herokuapp.com/api/follow",
         { bookId: book._id },
         {
           headers: {
@@ -47,12 +48,15 @@ function BookDetailScreen({ navigation }) {
 
   async function unfollowHandler() {
     try {
-      await axios.delete(`http://10.0.2.2:3000/api/unfollow/book/${book._id}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: authCtx.token,
-        },
-      });
+      await axios.delete(
+        `http://reading-book-api.herokuapp.com/api/unfollow/book/${book._id}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: authCtx.token,
+          },
+        }
+      );
       Alert.alert("Delete from your library");
       toggleFollow();
     } catch (err) {
@@ -65,7 +69,7 @@ function BookDetailScreen({ navigation }) {
       try {
         if (authCtx.isAuthenticated) {
           res = await axios.get(
-            `http://10.0.2.2:3000/api/books/book/${route.params._id}`,
+            `http://reading-book-api.herokuapp.com/api/books/book/${route.params._id}`,
             {
               headers: {
                 Authorization: authCtx.token,
@@ -74,7 +78,7 @@ function BookDetailScreen({ navigation }) {
           );
         } else {
           res = await axios.get(
-            `http://10.0.2.2:3000/api/books/book/${route.params._id}`
+            `http://reading-book-api.herokuapp.com/api/books/book/${route.params._id}`
           );
         }
         if (res.data.isFollowed) {
@@ -89,67 +93,85 @@ function BookDetailScreen({ navigation }) {
   }, []);
   return (
     <>
-      {book._id !== undefined && (
-        <LinearGradient style={styles.screen} colors={["#C04848", "#480048"]}>
-          <View style={styles.bookContainer}>
-            <Image
-              style={styles.bookCover}
-              source={{
-                uri: book.coverImageURL,
-              }}
-            />
-          </View>
-          <View style={styles.titleContainer}>
-            <Text style={styles.title}>{book.bookName}</Text>
-          </View>
-          <View style={styles.description}>
-            <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-              <Text style={styles.text}>"{book.description}"</Text>
-            </ScrollView>
-          </View>
+      <LinearGradient
+        style={{ flex: 1, justifyContent: "center" }}
+        colors={["#C04848", "#480048"]}
+      >
+        {!book._id && <ActivityIndicator size="large" />}
+        {book._id && (
+          <ScrollView
+            style={styles.screen}
+            contentContainerStyle={{ flexGrow: 1, alignItems: "center" }}
+            nestedScrollEnabled
+          >
+            <View style={styles.bookContainer}>
+              <Image
+                style={styles.bookCover}
+                source={{
+                  uri: book.coverImageURL,
+                }}
+              />
+            </View>
+            <View style={styles.titleContainer}>
+              <Text style={styles.title}>{book.bookName}</Text>
+            </View>
+            <View style={styles.description}>
+              <ScrollView
+                contentContainerStyle={{ flexGrow: 1 }}
+                nestedScrollEnabled
+              >
+                <Text style={styles.text}>"{book.description}"</Text>
+              </ScrollView>
+            </View>
 
-          <View style={styles.infoContainer}>
-            <Card>
-              <Text style={styles.infoText}>#{book.category.categoryName}</Text>
-            </Card>
-            <Card>
-              <View style={styles.iconContainer}>
-                <Text style={styles.infoText}>{book.avrStarNumber} </Text>
-                <Ionicons size={15} color="yellow" name="star" />
-              </View>
-            </Card>
-            <Card>
-              <Text style={styles.infoText}>1000 follower</Text>
-            </Card>
-          </View>
-          {!isFollowed ? (
-            <PrimaryButton
-              onPress={followHandler}
-              textStyle={styles.followTextStyle}
-              borderStyle={styles.followBorderStyle}
-            >
-              Add to library
-            </PrimaryButton>
-          ) : (
-            <PrimaryButton
-              onPress={unfollowHandler}
-              textStyle={styles.unfollowTextStyle}
-              borderStyle={styles.unfollowBorderStyle}
-            >
-              Unfollow
-            </PrimaryButton>
-          )}
-
-          <FlatList
-            style={styles.chapterContainer}
-            data={book.chapters}
-            renderItem={(itemData) => (
-              <ChapterItem chapter={itemData.item} index={itemData.index} />
+            <View style={styles.infoContainer}>
+              <Card>
+                <Text style={styles.infoText}>
+                  #{book.category.categoryName}
+                </Text>
+              </Card>
+              <Card>
+                <View style={styles.iconContainer}>
+                  <Text style={styles.infoText}>{book.avrStarNumber} </Text>
+                  <Ionicons size={15} color="yellow" name="star" />
+                </View>
+              </Card>
+              <Card>
+                <Text style={styles.infoText}>
+                  {book.followTotal} followers
+                </Text>
+              </Card>
+            </View>
+            {!isFollowed ? (
+              <PrimaryButton
+                onPress={followHandler}
+                textStyle={styles.followTextStyle}
+                borderStyle={styles.followBorderStyle}
+              >
+                Add to library
+              </PrimaryButton>
+            ) : (
+              <PrimaryButton
+                onPress={unfollowHandler}
+                textStyle={styles.unfollowTextStyle}
+                borderStyle={styles.unfollowBorderStyle}
+              >
+                Unfollow
+              </PrimaryButton>
             )}
-            keyExtractor={(chapter) => chapter._id}
-          />
-        </LinearGradient>
-      )}
+
+            <FlatList
+              nestedScrollEnabled={true}
+              style={styles.chapterContainer}
+              data={book.chapters}
+              renderItem={(itemData) => (
+                <ChapterItem chapter={itemData.item} index={itemData.index} />
+              )}
+              keyExtractor={(chapter) => chapter._id}
+            />
+          </ScrollView>
+        )}
+      </LinearGradient>
     </>
   );
 }
@@ -159,7 +181,6 @@ export default BookDetailScreen;
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    alignItems: "center",
     paddingHorizontal: 10,
   },
   bookContainer: {
@@ -188,6 +209,7 @@ const styles = StyleSheet.create({
   chapterContainer: {
     flex: 1,
     marginVertical: 20,
+    maxHeight: 250,
   },
   infoContainer: {
     flexDirection: "row",

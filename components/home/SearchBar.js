@@ -1,13 +1,10 @@
 import React from "react";
-import { TextInput, View, StyleSheet, Modal } from "react-native";
+import { TextInput, View, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-function SearchBar({ value, onSave, onClose }) {
+function SearchBar({ value, onSave }) {
   function changeTextHandler(enteredText) {
     onSave(enteredText);
-  }
-  function blurHandler() {
-    onClose();
   }
   return (
     <View style={styles.OutterContainer}>
@@ -16,7 +13,7 @@ function SearchBar({ value, onSave, onClose }) {
         style={styles.inputText}
         value={value}
         onChangeText={changeTextHandler}
-        // onBlur={blurHandler}
+        underlineColorAndroid="transparent"
       />
     </View>
   );
@@ -39,6 +36,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   inputText: {
+    textDecorationLine: "none",
     color: "white",
     fontSize: 18,
     marginLeft: 10,

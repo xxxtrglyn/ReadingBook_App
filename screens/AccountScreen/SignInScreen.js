@@ -48,7 +48,7 @@ function SignInScreen({ navigation }) {
       email: username,
       password: password,
     };
-    const baseURL = "http://10.0.2.2:3000/api";
+    const baseURL = "http://reading-book-api.herokuapp.com/api";
     try {
       const res = await axios.post(`${baseURL}/auth/sign_in`, user, {
         headers: {
@@ -58,8 +58,8 @@ function SignInScreen({ navigation }) {
       AsyncStorage.setItem("userInfo", JSON.stringify(res.data));
       authCtx.authenticate(res.data.token);
     } catch (err) {
-      console.log(err);
-      Alert.alert("Error occurs", "Some err", [{ text: "OK" }]);
+      console.log();
+      Alert.alert("Sign In Fail", err.response.data.message, [{ text: "OK" }]);
     }
   }
 

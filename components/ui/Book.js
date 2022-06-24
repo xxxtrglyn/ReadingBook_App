@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
     width: 120,
     height: 195,
     alignItems: "center",
-    margin: 5,
+    marginHorizontal: 5,
   },
   bookCover: {
     width: 120,

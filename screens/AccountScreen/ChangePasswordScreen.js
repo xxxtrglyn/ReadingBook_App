@@ -45,7 +45,7 @@ function ChangePasswordScreen({ navigation }) {
       oldPassword: username,
       newPassword: password,
     };
-    const baseURL = "http://10.0.2.2:3000/api";
+    const baseURL = "https://reading-book-api.herokuapp.com/api";
     try {
       const res = await axios.put(`${baseURL}/users/change-password`, user, {
         headers: {
