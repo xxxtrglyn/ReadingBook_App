@@ -43,9 +43,9 @@ function UpdateProfileScreen({ navigation }) {
       avatar: avatar,
       fullName: fullname,
     };
-    const baseURL = "http://10.0.2.2:3000/api";
+    const baseURL = "https://reading-book-api.herokuapp.com/api";
     try {
-      const res = await axios.put(`${baseURL}/users/profile`, user, {
+      const res = await axios.put(`${baseURL}/users/user/profile`, user, {
         headers: {
           "Content-Type": "application/json",
           Authorization: authCtx.token,

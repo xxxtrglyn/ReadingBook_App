@@ -12,11 +12,14 @@ function CategoryDrawer() {
     console.log("This running again");
     async function getCategory() {
       try {
-        const res = await axios.get("http://10.0.2.2:3000/api/categories", {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        const res = await axios.get(
+          "https://reading-book-api.herokuapp.com/api/categories",
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
         const transformCate = res.data.filter((cate) => {
           if (cate.categoryName === null) {
             return false;

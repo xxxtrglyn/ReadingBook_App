@@ -118,8 +118,8 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   avatarWrapper: {
-    width: 110,
-    height: 110,
+    width: 77,
+    height: 77,
     borderRadius: 300,
     overflow: "hidden",
     borderWidth: 2,

@@ -1,8 +1,9 @@
 import React from "react";
-import { ScrollView, StyleSheet, Image, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import Title from "../ui/Title";
+import Book from "../ui/Book";
 
-function ListBook({ title }) {
+function ListBook({ title, books }) {
   return (
     <View style={styles.outterContainer}>
       <Title>{title}</Title>
@@ -10,26 +11,8 @@ function ListBook({ title }) {
         contentContainerStyle={{ flexDirection: "row" }}
         horizontal={true}
       >
-        <Image
-          style={styles.bookContainer}
-          source={{ uri: "https://pbs.twimg.com/media/DyFoRcFUwAMEg3t.jpg" }}
-        />
-        <Image
-          style={styles.bookContainer}
-          source={{ uri: "https://pbs.twimg.com/media/DyFoRcFUwAMEg3t.jpg" }}
-        />
-        <Image
-          style={styles.bookContainer}
-          source={{ uri: "https://pbs.twimg.com/media/DyFoRcFUwAMEg3t.jpg" }}
-        />
-        <Image
-          style={styles.bookContainer}
-          source={{ uri: "https://pbs.twimg.com/media/DyFoRcFUwAMEg3t.jpg" }}
-        />
-        <Image
-          style={styles.bookContainer}
-          source={{ uri: "https://pbs.twimg.com/media/DyFoRcFUwAMEg3t.jpg" }}
-        />
+        {books.length > 0 &&
+          books.map((book) => <Book key={book._id} book={book} />)}
       </ScrollView>
     </View>
   );

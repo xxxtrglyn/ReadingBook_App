@@ -1,6 +1,12 @@
 import axios from "axios";
 import React, { useEffect, useLayoutEffect, useState } from "react";
-import { View, Text, StyleSheet, FlatList } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  ActivityIndicator,
+} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Title from "../../components/ui/Title";
 
@@ -34,14 +40,17 @@ function ReadingScreen({ navigation, route }) {
   return (
     <LinearGradient colors={["#C04848", "#480048"]} style={styles.screen}>
       <Title>{route.params.title}</Title>
-      <FlatList
-        data={content}
-        renderItem={(itemData) => (
-          <Text style={styles.text}>{itemData.item}</Text>
-        )}
-        contentContainerStyle={{ flexGrow: 1 }}
-        keyExtractor={(item, index) => "key" + index}
-      />
+      {content.length === 0 && <ActivityIndicator size="large" />}
+      {content.length > 0 && (
+        <FlatList
+          data={content}
+          renderItem={(itemData) => (
+            <Text style={styles.text}>{itemData.item}</Text>
+          )}
+          contentContainerStyle={{ flexGrow: 1 }}
+          keyExtractor={(item, index) => "key" + index}
+        />
+      )}
     </LinearGradient>
   );
 }

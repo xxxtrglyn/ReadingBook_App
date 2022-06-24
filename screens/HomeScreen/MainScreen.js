@@ -10,6 +10,9 @@ import SearchItem from "../../components/home/SearchItem";
 function MainScreen() {
   const [searchContent, setSearchContent] = useState("");
   const [searchBook, setSearchBook] = useState([]);
+  const [ratingBooks, setRatingBooks] = useState([]);
+  const [viewBooks, setViewBooks] = useState([]);
+  const [followsBooks, setFollowsBooks] = useState([]);
   function saveSearchContentHandler(enteredText) {
     if (enteredText.length === 0) {
       setSearchBook([]);
@@ -19,15 +22,50 @@ function MainScreen() {
   function closeSearchEngineHandler() {
     setSearchBook([]);
   }
+  useEffect(() => {
+    async function getRatingBooks() {
+      try {
+        const res = await axios.get(
+          "http://reading-book-api.herokuapp.com/api/books?pageSize=10&pageNumber=1&sort=desc&typeSort=avrStarNumber"
+        );
+        setRatingBooks(res.data.books);
+      } catch (err) {
+        console.log("some err");
+      }
+    }
+    async function getViewBooks() {
+      try {
+        const res = await axios.get(
+          "http://reading-book-api.herokuapp.com/api/books?pageSize=10&pageNumber=1&sort=desc&typeSort=viewNumber"
+        );
+        setViewBooks(res.data.books);
+      } catch (err) {
+        console.log("some err");
+      }
+    }
+    async function getFollowsBooks() {
+      try {
+        const res = await axios.get(
+          "http://reading-book-api.herokuapp.com/api/books?pageSize=10&pageNumber=1&sort=desc&typeSort=followTotal"
+        );
+        setFollowsBooks(res.data.books);
+      } catch (err) {
+        console.log("some err");
+      }
+    }
+    getRatingBooks();
+    getViewBooks();
+    getFollowsBooks();
+  }, []);
 
   useEffect(() => {
     if (searchContent.length > 0) {
       const searchEngine = setTimeout(async () => {
         try {
           const res = await axios.get(
-            `http://10.0.2.2:3000/api/books?pageSize=50&pageNumber=1&keyword=${searchContent}`
+            `http://reading-book-api.herokuapp.com/api/books?pageSize=50&pageNumber=1&keyword=${searchContent}`
           );
-          setSearchBook(res.data);
+          setSearchBook(res.data.books);
         } catch (err) {
           console.log("error occurs", err);
         }
@@ -71,9 +109,9 @@ function MainScreen() {
             ))}
           </ScrollView>
         )}
-        <ListBook title="Trending" />
-        <ListBook title="Best rating" />
-        <ListBook title="Most followers" />
+        <ListBook title="Trending" books={viewBooks} />
+        <ListBook title="Best rating" books={ratingBooks} />
+        <ListBook title="Most followers" books={followsBooks} />
       </ScrollView>
     </LinearGradient>
   );
